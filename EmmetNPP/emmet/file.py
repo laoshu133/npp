@@ -31,11 +31,19 @@ def read_file(path, size=-1, mode='rb'):
 	with open(path, mode, **kwargs) as fp:
 		return fp.read(size)
 
+def unicode_str_isneed(str, encoding='utf-8'):
+	if not isinstance(str, unicode):
+		str = unicode(str, encoding)
+
+	return str
+
+
 class File():
 	def __init__(self):
 		pass
 
 	def _read(self, path, size, mode='rb'):
+		path = unicode_str_isneed(path)
 		reader = is_url(path) and read_http or read_file
 		return reader(path, size, mode) 
 
@@ -93,6 +101,9 @@ class File():
 
 		result = None
 		
+		editor_file = unicode_str_isneed(editor_file)
+		file_name = unicode_str_isneed(file_name)
+
 		previous_parent = ''
 		parent = os.path.dirname(editor_file)
 		while parent and os.path.exists(parent) and parent != previous_parent:
